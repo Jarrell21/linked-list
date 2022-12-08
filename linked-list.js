@@ -1,4 +1,4 @@
-const Node = (value = null) => {
+const Node = (value) => {
     const nextNode = null;
     return { value, nextNode}
 }
@@ -12,12 +12,12 @@ const LinkedList = () => {
         length++;
         if(HEAD === null) return (HEAD = newNode);
 
-        let pointer = HEAD;
-        while(pointer.nextNode !== null){
-            pointer = pointer.nextNode
+        let currentNode = HEAD;
+        while(currentNode.nextNode !== null){
+            currentNode = currentNode.nextNode
         }
 
-        pointer.nextNode = newNode;
+        currentNode.nextNode = newNode;
     }
 
     // adds a new node containing value to the start of the list
@@ -47,25 +47,26 @@ const LinkedList = () => {
         if(HEAD === null) return null;
         if(HEAD.nextNode === null) return HEAD.value;
 
-        let pointer = HEAD;
-        while(pointer.nextNode !== null){
-            pointer = pointer.nextNode
+        let currentNode = HEAD;
+        while(currentNode.nextNode !== null){
+            currentNode = currentNode.nextNode
         }
 
-        return pointer.value;
+        return currentNode.value;
     }
 
     // returns the node at the given index
     const atIndex = (index) => {
         if(HEAD === null) return null;
-        if(index > (length+1)) return null;
+        if(index+1 > length) return null;
+        if(index === 0) return HEAD.value;
 
-        let pointer = HEAD;
+        let currentNode = HEAD;
         let i = 0;
-        while(pointer.nextNode !== null){
-            pointer = pointer.nextNode;
+        while(currentNode.nextNode !== null){
+            currentNode = currentNode.nextNode;
             i++;
-            if(index === i) return pointer;
+            if(index === i) return currentNode.value;
         }
     }
 
@@ -74,19 +75,125 @@ const LinkedList = () => {
         if(HEAD === null) return null;
         if(HEAD.nextNode === null) return (HEAD = null);
 
-        let pointer = HEAD;
-        pointer = pointer.nextNode;
+        let currentNode = HEAD;
+        let previousNode = null;
+        while(currentNode.nextNode !== null){
+            previousNode = currentNode;
+            currentNode = currentNode.nextNode;
+            if(currentNode.nextNode === null){
+                length--;
+                return (previousNode.nextNode = null);
+            }
+        }
         
     }
 
     // returns true if the passed in value is in the list and otherwise returns false.
-    const contains = (value) => {}
+    const contains = (value) => {
+        if(HEAD === null) return null;
+        if(HEAD.value === value) return true;
+
+        let currentNode = HEAD;
+        while(currentNode.nextNode !== null){
+            currentNode = currentNode.nextNode;
+            if(currentNode.value === value) return true;
+        }
+
+        return false;
+    }
 
     // returns the index of the node containing value, or null if not found.
-    const find = (value) => {}
+    const find = (value) => {
+        if(HEAD === null) return null;
+        if(HEAD.value === value) return 0;
+
+        let currentNode = HEAD;
+        let index =  0;
+        while(currentNode.nextNode !== null){
+            currentNode = currentNode.nextNode;
+            index++
+            if(currentNode.value === value) return index;
+        }
+    }
 
     // represents your LinkedList objects as strings, so you can print them out and preview them in the console
-    const toString = () => {}
+    const toString = () => {
+        if(HEAD === null) return null;
+        
+        let currentNode = HEAD;
+        let string = `${currentNode.value} --> `;
+        if(currentNode.nextNode === null) {
+            string = `${currentNode.value} --> null`;
+        }
+
+        while(currentNode.nextNode !== null){
+            currentNode = currentNode.nextNode;
+            if(currentNode.nextNode === null) return string += `${currentNode.value} --> null`;
+            string += `${currentNode.value} --> `
+        }
+
+        return string;
+    }
+
+    const insertAt = (value, index) => {
+        if(HEAD === null && index > 0) return null;
+
+        const newNode = Node(value);
+        let currentNode = HEAD;
+        let previousNode = null;
+        let indexCount = 0;
+        length++
+
+        // if inserted at first when list is empty
+        if(HEAD === null && index === indexCount) return (HEAD = newNode);
+
+        // if inserted at first when list is not empty
+        if(index === indexCount){
+            newNode.nextNode = HEAD;
+            HEAD = newNode;
+            return;
+        }
+
+        while (currentNode.nextNode !== null) {
+            previousNode = currentNode;
+            currentNode = currentNode.nextNode;
+            indexCount++;
+            if(index === indexCount){
+                previousNode.nextNode = newNode;
+                newNode.nextNode = currentNode;
+                return;
+            }
+
+        }
+
+        // if inserted at last
+        if(index === indexCount+1){
+            currentNode.nextNode = newNode;
+        }
+    };
+
+    const removeAt = (index) => {
+        if(HEAD === null) return null;
+
+        let currentNode = HEAD;
+        let previousNode = null;
+        let indexCount = 0;
+
+        if(HEAD.nextNode === null && index === indexCount) return (HEAD = null);
+
+        if(index === indexCount){
+            HEAD = HEAD.nextNode;
+        }
+
+        while (currentNode.nextNode !== null) {
+            previousNode = currentNode;
+            currentNode = currentNode.nextNode;
+            indexCount++;
+            if(index === indexCount){
+                previousNode.nextNode = currentNode.nextNode; 
+            }
+        }
+    }
 
     return {
         append,
@@ -99,5 +206,24 @@ const LinkedList = () => {
         contains,
         find,
         toString,
+        insertAt,
+        removeAt
     }
 }
+
+const myList = LinkedList();
+const sampleList = [1, 3, 5, 7, 9];
+
+sampleList.forEach((element) => {
+    myList.append(element);
+})
+
+myList.prepend(0)
+myList.pop()
+console.log(myList.toString());
+console.log('Head of the list: ', myList.head());
+console.log('Tail of the list: ', myList.tail());
+console.log('list size: ',myList.size());
+console.log('This is the value at index 3: ', myList.atIndex(3));
+console.log('The list contains "3": ', myList.contains(3));
+
