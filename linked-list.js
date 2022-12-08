@@ -121,15 +121,15 @@ const LinkedList = () => {
         if(HEAD === null) return null;
         
         let currentNode = HEAD;
-        let string = `${currentNode.value} --> `;
+        let string = `(${currentNode.value}) --> `;
         if(currentNode.nextNode === null) {
-            string = `${currentNode.value} --> null`;
+            string = `(${currentNode.value}) --> null`;
         }
 
         while(currentNode.nextNode !== null){
             currentNode = currentNode.nextNode;
-            if(currentNode.nextNode === null) return string += `${currentNode.value} --> null`;
-            string += `${currentNode.value} --> `
+            if(currentNode.nextNode === null) return string += `(${currentNode.value}) --> null`;
+            string += `(${currentNode.value}) --> `
         }
 
         return string;
@@ -226,4 +226,3 @@ console.log('Tail of the list: ', myList.tail());
 console.log('list size: ',myList.size());
 console.log('This is the value at index 3: ', myList.atIndex(3));
 console.log('The list contains "3": ', myList.contains(3));
-
